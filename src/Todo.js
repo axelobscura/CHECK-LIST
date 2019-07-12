@@ -1,18 +1,73 @@
 import React, { Component } from 'react';
+import './Todo.css';
 
 class Todo extends Component {
   constructor(props) {
     super(props);
-    this.state = {  }
+    this.state = {
+      isEditing: false,
+      task: this.props.task
+    };
+    this.handleRemove = this.handleRemove.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.toggleForm = this.toggleForm.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
   }
-  render() { 
-    return (
-      <div>
-        <button>EDIT</button>
-        <button>X</button>
-        <li>{this.props.task}</li>
-      </div>
-    );
+  handleRemove(){
+    this.props.removeTodo(this.props.id)
+  }
+  toggleForm(){
+    this.setState({
+      isEditing: !this.state.isEditing
+    })
+  }
+  handleChange(e){
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+  handleUpdate(e){
+    e.preventDefault();
+    this.props.updateTodo(this.props.id, this.state.task);
+    this.setState({
+      isEditing: false
+    })
+  }
+  handleToggle(e){
+    this.props.toggleTodo(this.props.id)
+  }
+  render() {
+    let result;
+    if(this.state.isEditing){
+      result = (
+        <div>
+          <form onSubmit={this.handleUpdate}>
+            <input 
+              type="text" 
+              value={this.state.task} 
+              name="task" 
+              onChange={this.handleChange}
+            />
+            <button>SAVE</button>
+          </form>
+        </div>
+      )
+    } else {
+      result = (
+        <div>
+          <button onClick={this.toggleForm}>EDIT</button>
+          <button onClick={this.handleRemove}>X</button>
+          <li 
+            className={this.props.completed ? "completed" : ""}
+            onClick={this.handleToggle}  
+          >
+            {this.props.task}
+          </li>
+        </div>
+      )
+    }
+    return result;
   }
 }
  
